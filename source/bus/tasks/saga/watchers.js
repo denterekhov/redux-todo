@@ -2,7 +2,7 @@
 import { takeEvery, all, call } from 'redux-saga/effects';
 
 //Workers
-import { fetchTasks, createTask, removeTask } from './workers';
+import { fetchTasks, createTask, updateTask, removeTask } from './workers';
 
 //Types
 import { types } from '../types';
@@ -15,10 +15,19 @@ function* watchCreateTask () {
     yield takeEvery(types.CREATE_TASK_ASYNC, createTask);
 }
 
+function* watchUpdateTask () {
+    yield takeEvery(types.UPDATE_TASK_ASYNC, updateTask);
+}
+
 function* watchRemoveTask () {
     yield takeEvery(types.REMOVE_TASK_ASYNC, removeTask);
 }
 
 export function* watchTasks () {
-    yield all([call(watchFetchTasks), call(watchCreateTask), call(watchRemoveTask)]);
+    yield all([
+        call(watchFetchTasks),
+        call(watchCreateTask),
+        call(watchUpdateTask),
+        call(watchRemoveTask)
+    ]);
 }

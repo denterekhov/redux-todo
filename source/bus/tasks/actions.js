@@ -14,6 +14,12 @@ export const tasksActions = {
             payload: task,
         };
     },
+    updateTask: (task) => {
+        return {
+            type:    types.UPDATE_TASK,
+            payload: task,
+        };
+    },
     removeTask: (taskId) => {
         return {
             type:    types.REMOVE_TASK,
@@ -30,6 +36,12 @@ export const tasksActions = {
     createTaskAsync: (task) => {
         return {
             type:    types.CREATE_TASK_ASYNC,
+            payload: task,
+        };
+    },
+    updateTaskAsync: (task) => {
+        return {
+            type:    types.UPDATE_TASK_ASYNC,
             payload: task,
         };
     },

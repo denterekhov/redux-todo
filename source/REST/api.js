@@ -20,6 +20,16 @@ export const api = {
             body: JSON.stringify({ message }),
         });
     },
+    update (task) {
+        return fetch(`${MAIN_URL}`, {
+            method:  'PUT',
+            headers: {
+                Authorization:  TOKEN,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify([task]),
+        });
+    },
     remove (taskId) {
         return fetch(`${MAIN_URL}/${taskId}`, {
             method:  'DELETE',

@@ -12,6 +12,35 @@ import Edit from '../../theme/assets/Edit';
 import Star from '../../theme/assets/Star';
 
 export default class Task extends PureComponent {
+    _getTaskShape = ({
+        id = this.props.id,
+        completed = this.props.completed,
+        favorite = this.props.favorite,
+        message = this.props.message,
+    }) => ({
+        id,
+        completed,
+        favorite,
+        message,
+    });
+
+    _updateTask = () => {
+        const { removeTaskAsync, id } = this.props;
+
+        removeTaskAsync(id);
+    }
+
+    _toggleTaskCompletedState = () => {
+        const { updateTaskAsync, completed } = this.props;
+
+        updateTaskAsync(this._getTaskShape({ completed: !completed }));
+    };
+
+    _toggleTaskFavoriteState = () => {
+        const { updateTaskAsync, favorite } = this.props;
+
+        updateTaskAsync(this._getTaskShape({ favorite: !favorite }));
+    };
 
     _removeTask = () => {
         const { removeTaskAsync, id } = this.props;
@@ -35,6 +64,7 @@ export default class Task extends PureComponent {
                         className = { Styles.toggleTaskCompletedState }
                         color1 = '#3B8EF3'
                         color2 = '#FFF'
+                        onClick = { this._toggleTaskCompletedState }
                     />
                     <input disabled type = 'text' value = { message } />
                 </div>
@@ -45,6 +75,7 @@ export default class Task extends PureComponent {
                         className = { Styles.toggleTaskFavoriteState }
                         color1 = '#3B8EF3'
                         color2 = '#000'
+                        onClick = { this._toggleTaskFavoriteState }
                     />
                     <Edit
                         inlineBlock

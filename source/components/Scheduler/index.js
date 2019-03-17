@@ -16,8 +16,9 @@ import { tasksActions } from '../../bus/tasks/actions';
 
 const mapStateToProps = (state) => {
     return {
-        tasks:   state.tasks,
-        newTask: state.form.formValues.newTask,
+        tasks:      state.tasks,
+        newTask:    state.form.formValues.newTask,
+        taskSearch: state.form.formValues.taskSearch,
     }
 }
 
@@ -41,6 +42,13 @@ export default class Scheduler extends Component {
         actions.fetchTasksAsync();
     }
 
+    _filterTasks = () => {
+        const { tasks, taskSearch } = this.props;
+        return tasks.filter((task) => 
+            task.get('message').toLocaleLowerCase().includes(taskSearch)
+        )
+    }
+
     _handleSubmit = () => {
         const { 
             actions: {
@@ -56,11 +64,16 @@ export default class Scheduler extends Component {
     render () {
         const { 
             actions: {
-                removeTaskAsync
+                removeTaskAsync,
+                updateTaskAsync
             },
-            tasks 
+            tasks,
+            taskSearch
         } = this.props;
-        const todoList = tasks.map((task) => (
+
+        const filteredTasks = taskSearch ? this._filterTasks() : tasks;
+
+        const todoList = filteredTasks.map((task) => (
             <Task
                 completed = { task.get('completed') }
                 favorite = { task.get('favorite') }
@@ -68,6 +81,7 @@ export default class Scheduler extends Component {
                 key = { task.get('id') }
                 message = { task.get('message') }
                 removeTaskAsync = { removeTaskAsync }
+                updateTaskAsync = { updateTaskAsync }
                 { ...task }
             />
         ));
@@ -77,7 +91,11 @@ export default class Scheduler extends Component {
                 <main>
                     <header>
                         <h1>Планировщик задач</h1>
-                        <input placeholder = 'Поиск' type = 'search' />
+                        <Control.text
+                            model = "formValues.taskSearch"
+                            placeholder = 'Поиск'
+                            type = 'search'
+                        />
                     </header>
                     <section>
                         <Form
