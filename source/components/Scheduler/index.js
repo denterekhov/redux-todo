@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { Form, Control, actions as formActions } from 'react-redux-form/immutable';
 
 // Instruments
 import Styles from './styles.m.css';
@@ -15,13 +16,17 @@ import { tasksActions } from '../../bus/tasks/actions';
 
 const mapStateToProps = (state) => {
     return {
-        tasks: state.tasks
+        tasks:   state.tasks,
+        newTask: state.form.formValues.newTask,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        actions: bindActionCreators({ ...tasksActions }, dispatch),
+        actions: bindActionCreators({ 
+            ...tasksActions,
+            clearInput: () => formActions.reset('formValues.newTask')
+        }, dispatch),
     }
 }
 
@@ -36,15 +41,33 @@ export default class Scheduler extends Component {
         actions.fetchTasksAsync();
     }
 
+    _handleSubmit = () => {
+        const { 
+            actions: {
+                createTaskAsync,
+                clearInput
+            }, 
+            newTask 
+        } = this.props;
+        createTaskAsync(newTask);
+        clearInput();
+    }
+
     render () {
-        const { tasks } = this.props;
+        const { 
+            actions: {
+                removeTaskAsync
+            },
+            tasks 
+        } = this.props;
         const todoList = tasks.map((task) => (
             <Task
-                completed = { task.completed }
-                favorite = { task.favorite }
-                id = { task.id }
-                key = { task.id }
-                message = { task.message }
+                completed = { task.get('completed') }
+                favorite = { task.get('favorite') }
+                id = { task.get('id') }
+                key = { task.get('id') }
+                message = { task.get('message') }
+                removeTaskAsync = { removeTaskAsync }
                 { ...task }
             />
         ));
@@ -57,15 +80,18 @@ export default class Scheduler extends Component {
                         <input placeholder = 'Поиск' type = 'search' />
                     </header>
                     <section>
-                        <form>
-                            <input
+                        <Form
+                            model = "formValues"
+                            onSubmit = {this._handleSubmit}
+                        >
+                            <Control.text 
+                                model = ".newTask"
                                 className = { Styles.createTask }
                                 maxLength = { 50 }
                                 placeholder = 'Описание моей новой задачи'
-                                type = 'text'
                             />
-                            <button>Добавить задачу</button>
-                        </form>
+                            <button type="submit">Добавить задачу</button>
+                        </Form>
                         <div className = { Styles.overlay }>
                             <ul>{todoList}</ul>
                         </div>
