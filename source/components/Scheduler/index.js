@@ -45,7 +45,7 @@ export default class Scheduler extends Component {
     _filterTasks = () => {
         const { tasks, taskSearch } = this.props;
         return tasks.filter((task) => 
-            task.get('message').toLocaleLowerCase().includes(taskSearch)
+            task.get('message').toLocaleLowerCase().includes(taskSearch.toLocaleLowerCase())
         )
     }
 
@@ -57,8 +57,27 @@ export default class Scheduler extends Component {
             }, 
             newTask 
         } = this.props;
+        if (!newTask.trim()) {
+            return null;
+        }
         createTaskAsync(newTask);
         clearInput();
+    }
+
+    _completeAllTasks = () => {
+        const { tasks, actions } = this.props;
+        if (this._getAllCompleted()) {
+            return null;
+        }
+        const completedTasks = tasks.map((task) => {
+            return task.set('completed', true)
+        })
+        actions.completeAllTasksAsync(completedTasks);
+    }
+
+    _getAllCompleted = () => {
+        const { tasks } = this.props;
+        return tasks.every(task => task.get('completed'));
     }
 
     render () {
@@ -71,6 +90,7 @@ export default class Scheduler extends Component {
             taskSearch
         } = this.props;
 
+        const areTasksCompleted = tasks.size && this._getAllCompleted();
         const filteredTasks = taskSearch ? this._filterTasks() : tasks;
 
         const todoList = filteredTasks.map((task) => (
@@ -115,7 +135,12 @@ export default class Scheduler extends Component {
                         </div>
                     </section>
                     <footer>
-                        <Checkbox checked color1 = '#363636' color2 = '#fff' />
+                        <Checkbox 
+                            checked = { areTasksCompleted }
+                            color1 = '#363636' 
+                            color2 = '#fff'
+                            onClick = { this._completeAllTasks }
+                        />
                         <span className = { Styles.completeAllTasks }>
                             Все задачи выполнены
                         </span>

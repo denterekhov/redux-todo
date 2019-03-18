@@ -11,7 +11,7 @@ export const tasksReducer = (state = initialState, action) => {
             return fromJS(action.payload);
 
         case types.CREATE_TASK:
-            return [fromJS(action.payload), ...state];
+            return state.unshift(fromJS(action.payload));
 
         case types.UPDATE_TASK:
             return state.map((task) => {
@@ -24,6 +24,9 @@ export const tasksReducer = (state = initialState, action) => {
             return state.filter((task) => {
                 return task.get('id') !== action.payload;
             });
+
+        case types.COMPLETE_ALL_TASKS:
+            return fromJS(action.payload);
 
         default:
             return state;
