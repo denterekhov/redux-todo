@@ -10,6 +10,7 @@ import { sortTasksByGroup } from '../../instruments/helpers';
 
 // Components
 import Task from '../Task';
+import Spinner from '../Spinner';
 import Checkbox from '../../theme/assets/Checkbox';
 
 // Actions
@@ -90,7 +91,8 @@ export default class Scheduler extends Component {
                 removeTaskAsync,
                 updateTaskAsync,
                 startEditTask,
-                stopEditTask
+                stopEditTask,
+                isSpinning,
             },
             ui,
             tasks,
@@ -117,6 +119,7 @@ export default class Scheduler extends Component {
 
         return (
             <section className = { Styles.scheduler }>
+                <Spinner isSpinning = { ui.get('isSpinning') } />
                 <main>
                     <header>
                         <h1>Планировщик задач</h1>

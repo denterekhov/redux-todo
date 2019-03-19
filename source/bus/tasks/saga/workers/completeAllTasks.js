@@ -1,5 +1,5 @@
 //Core
-import { put, apply, call, all } from 'redux-saga/effects';
+import { put, apply, all } from 'redux-saga/effects';
 
 import { api } from '../../../../REST/api';
 import { tasksActions } from '../../actions';
@@ -7,6 +7,7 @@ import { uiActions } from '../../../ui/actions';
 
 export function* completeAllTasks ({ payload: tasks }) {
     try {
+        yield put(uiActions.startSpinning());
         const responses = yield all(tasks.toJS().map((task) => apply(api, api.update, [task])));
 
         if (responses.some((response) => response.status !== 200)) {
@@ -18,5 +19,7 @@ export function* completeAllTasks ({ payload: tasks }) {
         yield put(tasksActions.completeAllTasks(updatedTasks));
     } catch (error) {
         yield put(uiActions.emitError(error, 'completeAllTasks worker'));
+    } finally {
+        yield put(uiActions.stopSpinning());
     }
 }

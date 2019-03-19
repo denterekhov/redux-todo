@@ -7,6 +7,7 @@ import { uiActions } from '../../../ui/actions';
 
 export function* createTask ({ payload: task }) {
     try {
+        yield put(uiActions.startSpinning());
         const response = yield apply(api, api.create, [task]);
         const { data: newTask, message } = yield apply(response, response.json);
 
@@ -16,5 +17,7 @@ export function* createTask ({ payload: task }) {
         yield put(tasksActions.createTask(newTask));
     } catch (error) {
         yield put(uiActions.emitError(error, 'createTask worker'));
+    } finally {
+        yield put(uiActions.stopSpinning());
     }
 }

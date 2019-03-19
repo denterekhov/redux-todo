@@ -30,4 +30,14 @@ export const uiActions = {
             payload: message,
         };
     },
+    startSpinning: () => {
+        return {
+            type: types.START_SPINNING,
+        };
+    },
+    stopSpinning: () => {
+        return {
+            type: types.STOP_SPINNING,
+        };
+    },
 };

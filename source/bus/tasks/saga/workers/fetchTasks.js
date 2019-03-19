@@ -7,6 +7,7 @@ import { uiActions } from '../../../ui/actions';
 
 export function* fetchTasks () {
     try {
+        yield put(uiActions.startSpinning());
         const response = yield apply(api, api.fetch);
         const { data: tasks, message } = yield apply(response, response.json);
 
@@ -16,5 +17,7 @@ export function* fetchTasks () {
         yield put(tasksActions.fillTasks(tasks));
     } catch (error) {
         yield put(uiActions.emitError(error, 'fetchTasks worker'));
+    } finally {
+        yield put(uiActions.stopSpinning());
     }
 }
