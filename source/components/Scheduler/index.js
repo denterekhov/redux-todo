@@ -6,6 +6,7 @@ import { Form, Control, actions as formActions } from 'react-redux-form/immutabl
 
 // Instruments
 import Styles from './styles.m.css';
+import { sortTasksByGroup } from '../../instruments/helpers';
 
 // Components
 import Task from '../Task';
@@ -13,9 +14,11 @@ import Checkbox from '../../theme/assets/Checkbox';
 
 // Actions
 import { tasksActions } from '../../bus/tasks/actions';
+import { uiActions } from '../../bus/ui/actions';
 
 const mapStateToProps = (state) => {
     return {
+        ui:         state.ui,
         tasks:      state.tasks,
         newTask:    state.form.formValues.newTask,
         taskSearch: state.form.formValues.taskSearch,
@@ -26,6 +29,7 @@ const mapDispatchToProps = (dispatch) => {
     return {
         actions: bindActionCreators({ 
             ...tasksActions,
+            ...uiActions,
             clearInput: () => formActions.reset('formValues.newTask')
         }, dispatch),
     }
@@ -84,16 +88,19 @@ export default class Scheduler extends Component {
         const { 
             actions: {
                 removeTaskAsync,
-                updateTaskAsync
+                updateTaskAsync,
+                startEditTask,
+                stopEditTask
             },
+            ui,
             tasks,
             taskSearch
         } = this.props;
 
         const areTasksCompleted = tasks.size && this._getAllCompleted();
         const filteredTasks = taskSearch ? this._filterTasks() : tasks;
-
-        const todoList = filteredTasks.map((task) => (
+        const sortedTasks = sortTasksByGroup(filteredTasks);
+        const todoList = sortedTasks.map((task) => (
             <Task
                 completed = { task.get('completed') }
                 favorite = { task.get('favorite') }
@@ -102,6 +109,8 @@ export default class Scheduler extends Component {
                 message = { task.get('message') }
                 removeTaskAsync = { removeTaskAsync }
                 updateTaskAsync = { updateTaskAsync }
+                startEditTask = { startEditTask }
+                stopEditTask = { stopEditTask }
                 { ...task }
             />
         ));
@@ -123,6 +132,7 @@ export default class Scheduler extends Component {
                             onSubmit = {this._handleSubmit}
                         >
                             <Control.text 
+                                autoFocus
                                 model = ".newTask"
                                 className = { Styles.createTask }
                                 maxLength = { 50 }
