@@ -23,24 +23,24 @@ const mapStateToProps = (state) => {
         tasks:      state.tasks,
         newTask:    state.form.formValues.newTask,
         taskSearch: state.form.formValues.taskSearch,
-    }
-}
+    };
+};
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        actions: bindActionCreators({ 
+        actions: bindActionCreators({
             ...tasksActions,
             ...uiActions,
-            clearInput: () => formActions.reset('formValues.newTask')
+            clearInput: () => formActions.reset('formValues.newTask'),
         }, dispatch),
-    }
-}
+    };
+};
 
 @connect(
     mapStateToProps,
     mapDispatchToProps
 )
-export default class Scheduler extends Component {
+class Scheduler extends Component {
     componentDidMount () {
         const { actions } = this.props;
 
@@ -49,19 +49,21 @@ export default class Scheduler extends Component {
 
     _filterTasks = () => {
         const { tasks, taskSearch } = this.props;
-        return tasks.filter((task) => 
+
+        return tasks.filter((task) =>
             task.get('message').toLocaleLowerCase().includes(taskSearch.toLocaleLowerCase())
-        )
+        );
     }
 
     _handleSubmit = () => {
-        const { 
+        const {
             actions: {
                 createTaskAsync,
-                clearInput
-            }, 
-            newTask 
+                clearInput,
+            },
+            newTask,
         } = this.props;
+
         if (!newTask.trim()) {
             return null;
         }
@@ -71,32 +73,34 @@ export default class Scheduler extends Component {
 
     _completeAllTasks = () => {
         const { tasks, actions } = this.props;
+
         if (this._getAllCompleted()) {
             return null;
         }
         const completedTasks = tasks.map((task) => {
-            return task.set('completed', true)
-        })
+            return task.set('completed', true);
+        });
+
         actions.completeAllTasksAsync(completedTasks);
     }
 
     _getAllCompleted = () => {
         const { tasks } = this.props;
-        return tasks.every(task => task.get('completed'));
+
+        return tasks.every((task) => task.get('completed'));
     }
 
     render () {
-        const { 
+        const {
             actions: {
                 removeTaskAsync,
                 updateTaskAsync,
                 startEditTask,
                 stopEditTask,
-                isSpinning,
             },
             ui,
             tasks,
-            taskSearch
+            taskSearch,
         } = this.props;
 
         const areTasksCompleted = tasks.size && this._getAllCompleted();
@@ -110,9 +114,9 @@ export default class Scheduler extends Component {
                 key = { task.get('id') }
                 message = { task.get('message') }
                 removeTaskAsync = { removeTaskAsync }
-                updateTaskAsync = { updateTaskAsync }
                 startEditTask = { startEditTask }
                 stopEditTask = { stopEditTask }
+                updateTaskAsync = { updateTaskAsync }
                 { ...task }
             />
         ));
@@ -124,33 +128,32 @@ export default class Scheduler extends Component {
                     <header>
                         <h1>Планировщик задач</h1>
                         <Control.text
-                            model = "formValues.taskSearch"
+                            model = 'formValues.taskSearch'
                             placeholder = 'Поиск'
                             type = 'search'
                         />
                     </header>
                     <section>
                         <Form
-                            model = "formValues"
-                            onSubmit = {this._handleSubmit}
-                        >
-                            <Control.text 
+                            model = 'formValues'
+                            onSubmit = { this._handleSubmit }>
+                            <Control.text
                                 autoFocus
-                                model = ".newTask"
                                 className = { Styles.createTask }
                                 maxLength = { 50 }
+                                model = '.newTask'
                                 placeholder = 'Описание моей новой задачи'
                             />
-                            <button type="submit">Добавить задачу</button>
+                            <button type = 'submit'>Добавить задачу</button>
                         </Form>
                         <div className = { Styles.overlay }>
                             <ul>{todoList}</ul>
                         </div>
                     </section>
                     <footer>
-                        <Checkbox 
+                        <Checkbox
                             checked = { areTasksCompleted }
-                            color1 = '#363636' 
+                            color1 = '#363636'
                             color2 = '#fff'
                             onClick = { this._completeAllTasks }
                         />
@@ -163,3 +166,5 @@ export default class Scheduler extends Component {
         );
     }
 }
+
+export default Scheduler;

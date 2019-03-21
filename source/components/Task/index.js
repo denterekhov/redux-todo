@@ -2,7 +2,6 @@
 import React, { PureComponent, createRef } from 'react';
 import { connect } from 'react-redux';
 import cx from 'classnames';
-import { Control, actions as formActions } from 'react-redux-form/immutable';
 import { uiActions } from '../../bus/ui/actions';
 
 // Instruments
@@ -17,20 +16,20 @@ import Star from '../../theme/assets/Star';
 const mapStateToProps = (state) => {
     return {
         editingTaskMessage: state.ui.getIn(['editingTask', 'editingTaskMessage']),
-        editingTaskId: state.ui.getIn(['editingTask', 'editingTaskId']),
-    }
-}
+        editingTaskId:      state.ui.getIn(['editingTask', 'editingTaskId']),
+    };
+};
 
 const mapDispatchToProps = (dispatch) => ({
-    updateTaskMessage: message => dispatch(uiActions.updateTaskMessage(message))
-})
+    updateTaskMessage: (message) => dispatch(uiActions.updateTaskMessage(message)),
+});
 
 @connect(
     mapStateToProps,
     mapDispatchToProps
 )
 
-export default class Task extends PureComponent {
+class Task extends PureComponent {
     componentDidUpdate = () => {
         this.taskInput.current.focus();
     }
@@ -52,17 +51,18 @@ export default class Task extends PureComponent {
     _toggleTaskCompletedState = () => {
         const { updateTaskAsync, completed } = this.props;
 
-        updateTaskAsync(this._getTaskShape({ completed: !completed }));
+        updateTaskAsync([this._getTaskShape({ completed: !completed })]);
     };
 
     _toggleTaskFavoriteState = () => {
         const { updateTaskAsync, favorite } = this.props;
 
-        updateTaskAsync(this._getTaskShape({ favorite: !favorite }));
+        updateTaskAsync([this._getTaskShape({ favorite: !favorite })]);
     };
 
     _updateNewTaskMessage = (e) => {
         const { updateTaskMessage } = this.props;
+
         updateTaskMessage(e.target.value);
     };
 
@@ -88,23 +88,21 @@ export default class Task extends PureComponent {
 
         if (editingTaskMessage.trim() === message.trim() || !editingTaskMessage) {
             stopEditTask();
+
             return null;
         }
-        updateTaskAsync(this._getTaskShape({ message: editingTaskMessage }));
+        updateTaskAsync([this._getTaskShape({ message: editingTaskMessage })]);
         stopEditTask();
     };
 
     _updateTaskMessageOnClick = () => {
-        const { message, startEditTask, editingTaskId, editingTaskMessage, id } = this.props;
-        
-        if (!editingTaskMessage.trim() && editingTaskId === id) {
-            return null;
-        }
+        const { message, startEditTask, stopEditTask, editingTaskId, id } = this.props;
+
         if (editingTaskId === id) {
-            this._updateTask();
-         } else { 
+            stopEditTask();
+        } else {
             startEditTask(message, id);
-         }
+        }
     }
 
     _removeTask = () => {
@@ -134,9 +132,9 @@ export default class Task extends PureComponent {
                         onClick = { this._toggleTaskCompletedState }
                     />
                     <input
-                        ref = { this.taskInput }
                         disabled = { !isTaskEditing }
                         maxLength = { 50 }
+                        ref = { this.taskInput }
                         type = 'text'
                         value = { messageValue }
                         onChange = { this._updateNewTaskMessage }
@@ -172,3 +170,5 @@ export default class Task extends PureComponent {
         );
     }
 }
+
+export default Task;

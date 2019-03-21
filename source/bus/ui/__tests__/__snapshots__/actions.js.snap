@@ -1,0 +1,54 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ui actions: emitError 1`] = `
+Object {
+  "error": true,
+  "meta": null,
+  "payload": [Error: TEST_ERROR_MESSAGE.],
+  "type": "EMIT_ERROR",
+}
+`;
+
+exports[`ui actions: emitError with meta information 1`] = `
+Object {
+  "error": true,
+  "meta": "META_INFORMATION",
+  "payload": [Error: TEST_ERROR_MESSAGE.],
+  "type": "EMIT_ERROR",
+}
+`;
+
+exports[`ui actions: startEditTask 1`] = `
+Object {
+  "payload": Object {
+    "editingTaskId": "TEST_ID",
+    "editingTaskMessage": "test_message",
+  },
+  "type": "START_EDIT_TASK",
+}
+`;
+
+exports[`ui actions: startSpinning 1`] = `
+Object {
+  "type": "START_SPINNING",
+}
+`;
+
+exports[`ui actions: stopEditTask 1`] = `
+Object {
+  "type": "STOP_EDIT_TASK",
+}
+`;
+
+exports[`ui actions: stopSpinning 1`] = `
+Object {
+  "type": "STOP_SPINNING",
+}
+`;
+
+exports[`ui actions: updateTaskMessage 1`] = `
+Object {
+  "payload": "test_message",
+  "type": "UPDATE_TASK_MESSAGE",
+}
+`;

@@ -94,6 +94,7 @@
         "react-dev-utils": "7.0.1",
         "react-hot-loader": "4.6.3",
         "redux-logger": "3.0.6",
+        "redux-saga-test-plan": "^3.7.0",
         "style-loader": "0.23.1",
         "stylelint": "9.9.0",
         "url-loader": "1.1.2",

@@ -8,7 +8,7 @@ const initialState = Map({
     editingTask: {
         editingTaskMessage: '',
         editingTaskId:      '',
-    }
+    },
 });
 
 export const uiReducer = (state = initialState, action) => {

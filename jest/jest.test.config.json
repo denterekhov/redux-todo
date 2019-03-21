@@ -5,7 +5,10 @@
     "verbose": false,
     "notify": true,
     "bail": false,
-    "collectCoverage": false,
+    "globals": {
+      "__DEV__": true
+  },
+    "collectCoverage": true,
     "collectCoverageFrom": ["<rootDir>/source/**/*.js"],
     "coveragePathIgnorePatterns": [
         "/node_modules/",
